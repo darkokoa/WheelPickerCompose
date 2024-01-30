@@ -1,5 +1,6 @@
 package com.commandiron.wheel_picker_compose.core
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
@@ -19,8 +20,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 @Composable
@@ -68,27 +71,25 @@ internal fun WheelPicker(
             flingBehavior = flingBehavior
         ){
             items(count){ index ->
-//                val rotationX = calculateAnimatedRotationX(
-//                    lazyListState = lazyListState,
-////                    snapperLayoutInfo = snapperLayoutInfo,
-//                    index = index,
-//                    rowCount = rowCount
-//                )
+                val rotationX = calculateAnimatedRotationX(
+                    lazyListState = lazyListState,
+                    index = index,
+                    rowCount = rowCount
+                )
                 Box(
                     modifier = Modifier
                         .height(size.height / rowCount)
-                        .width(size.width),
-//                        .alpha(
-//                            calculateAnimatedAlpha(
-//                                lazyListState = lazyListState,
-////                                snapperLayoutInfo = snapperLayoutInfo,
-//                                index = index,
-//                                rowCount = rowCount
-//                            )
-//                        )
-//                        .graphicsLayer {
-//                            this.rotationX = rotationX
-//                        },
+                        .width(size.width)
+                        .alpha(
+                            calculateAnimatedAlpha(
+                                lazyListState = lazyListState,
+                                index = index,
+                                rowCount = rowCount
+                            )
+                        )
+                        .graphicsLayer {
+                            this.rotationX = rotationX
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     content(index)
@@ -107,46 +108,65 @@ private fun calculateSnappedItemIndex(lazyListState: LazyListState): Int {
     return currentItemIndex
 }
 
-//@Composable
-//private fun calculateAnimatedAlpha(
-//    lazyListState: LazyListState,
-////    snapperLayoutInfo: SnapperLayoutInfo,
-//    index: Int,
-//    rowCount: Int
-//): Float {
-//
-//    val distanceToIndexSnap = snapperLayoutInfo.distanceToIndexSnap(index).absoluteValue
-//    val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
-//    val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
-//    val singleViewPortHeight = viewPortHeight / rowCount
-//
-//    return if(distanceToIndexSnap in 0..singleViewPortHeight.toInt()) {
-//        1.2f - (distanceToIndexSnap / singleViewPortHeight)
-//    } else {
-//        0.2f
-//    }
-//}
-//
-//@Composable
-//private fun calculateAnimatedRotationX(
-//    lazyListState: LazyListState,
-////    snapperLayoutInfo: SnapperLayoutInfo,
-//    index: Int,
-//    rowCount: Int
-//): Float {
-//
-//    val distanceToIndexSnap = snapperLayoutInfo.distanceToIndexSnap(index)
-//    val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
-//    val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
-//    val singleViewPortHeight = viewPortHeight / rowCount
-//    val animatedRotationX = -20f * (distanceToIndexSnap / singleViewPortHeight)
-//
-//    return if (animatedRotationX.isNaN()) {
-//        0f
-//    } else {
-//        animatedRotationX
-//    }
-//}
+@Composable
+private fun calculateAnimatedAlpha(
+    lazyListState: LazyListState,
+    index: Int,
+    rowCount: Int
+): Float {
+
+    val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
+    val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
+    val singleViewPortHeight = viewPortHeight / rowCount
+
+    val centerIndex = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }.value
+    val centerIndexOffset = remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }.value
+
+    val distanceToCenterIndex = index - centerIndex
+
+    val distanceToIndexSnap = abs(distanceToCenterIndex) * singleViewPortHeight.toInt() - when {
+        distanceToCenterIndex > 0 -> centerIndexOffset
+        distanceToCenterIndex <= 0 -> -centerIndexOffset
+        else -> 0
+    }
+
+    return if(distanceToIndexSnap in 0..singleViewPortHeight.toInt()) {
+        1.2f - (distanceToIndexSnap / singleViewPortHeight)
+    } else {
+        0.2f
+    }
+}
+
+@Composable
+private fun calculateAnimatedRotationX(
+    lazyListState: LazyListState,
+    index: Int,
+    rowCount: Int
+): Float {
+
+    val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
+    val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
+    val singleViewPortHeight = viewPortHeight / rowCount
+
+    val centerIndex = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }.value
+    val centerIndexOffset = remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }.value
+
+    val distanceToCenterIndex = index - centerIndex
+
+    val distanceToIndexSnap = abs(distanceToCenterIndex) * singleViewPortHeight.toInt() - when {
+        distanceToCenterIndex > 0 -> centerIndexOffset
+        distanceToCenterIndex <= 0 -> -centerIndexOffset
+        else -> 0
+    }
+
+    val animatedRotationX = -20f * (distanceToIndexSnap / singleViewPortHeight)
+
+    return if (animatedRotationX.isNaN()) {
+        0f
+    } else {
+        animatedRotationX
+    }
+}
 
 object WheelPickerDefaults{
     @Composable
