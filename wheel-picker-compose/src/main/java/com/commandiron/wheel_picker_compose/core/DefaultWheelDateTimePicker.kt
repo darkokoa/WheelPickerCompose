@@ -13,15 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
+import kotlinx.datetime.LocalDateTime
+import kotlin.time.DurationUnit
 
 @Composable
 internal fun DefaultWheelDateTimePicker(
     modifier: Modifier = Modifier,
     startDateTime: LocalDateTime = LocalDateTime.now(),
-    minDateTime: LocalDateTime = LocalDateTime.MIN,
-    maxDateTime: LocalDateTime = LocalDateTime.MAX,
+    minDateTime: LocalDateTime = LocalDateTime.EPOCH,
+    maxDateTime: LocalDateTime = LocalDateTime.CYBER_ERA,
     yearsRange: IntRange? = IntRange(1922, 2122),
     timeFormat: TimeFormat = TimeFormat.HOUR_24,
     size: DpSize = DpSize(256.dp, 128.dp),
@@ -32,7 +32,7 @@ internal fun DefaultWheelDateTimePicker(
     onSnappedDateTime : (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null }
 ) {
 
-    var snappedDateTime by remember { mutableStateOf(startDateTime.truncatedTo(ChronoUnit.MINUTES)) }
+    var snappedDateTime by remember { mutableStateOf(startDateTime.truncatedTo(DurationUnit.MINUTES)) }
 
     val yearTexts = yearsRange?.map { it.toString() } ?: listOf()
 
@@ -49,7 +49,7 @@ internal fun DefaultWheelDateTimePicker(
         Row {
             //Date
             DefaultWheelDatePicker(
-                startDate = startDateTime.toLocalDate(),
+                startDate = startDateTime.date,
                 yearsRange = yearsRange,
                 size = DpSize(
                     width = if(yearsRange == null ) size.width * 3 / 6 else size.width * 3 / 5 ,
@@ -68,7 +68,7 @@ internal fun DefaultWheelDateTimePicker(
                             snappedDateTime.withDayOfMonth(snappedDate.snappedLocalDate.dayOfMonth)
                         }
                         is SnappedDate.Month -> {
-                            snappedDateTime.withMonth(snappedDate.snappedLocalDate.monthValue)
+                            snappedDateTime.withMonthNumber(snappedDate.snappedLocalDate.monthNumber)
                         }
                         is SnappedDate.Year -> {
                             snappedDateTime.withYear(snappedDate.snappedLocalDate.year)
@@ -97,7 +97,7 @@ internal fun DefaultWheelDateTimePicker(
             )
             //Time
             DefaultWheelTimePicker(
-                startTime = startDateTime.toLocalTime(),
+                startTime = startDateTime.time,
                 timeFormat = timeFormat,
                 size = DpSize(
                     width = if(yearsRange == null ) size.width * 3 / 6  else size.width * 2 / 5 ,
@@ -128,7 +128,7 @@ internal fun DefaultWheelDateTimePicker(
                         is SnappedTime.Hour -> {
                             onSnappedDateTime(SnappedDateTime.Hour(snappedDateTime, snappedDateTime.hour))
                             if(timeFormat == TimeFormat.HOUR_24) snappedDateTime.hour else
-                            localTimeToAmPmHour(snappedDateTime.toLocalTime()) - 1
+                            localTimeToAmPmHour(snappedDateTime.time) - 1
                         }
                         is SnappedTime.Minute -> {
                             onSnappedDateTime(SnappedDateTime.Minute(snappedDateTime, snappedDateTime.minute))

@@ -21,7 +21,10 @@ import com.commandiron.wheel_picker_compose.WheelTimePicker
 import com.commandiron.wheel_picker_compose.core.TimeFormat
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
 import com.commandiron.wheelpickercompose.ui.theme.WheelPickerComposeTheme
-import java.time.LocalDateTime
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,11 +49,11 @@ class MainActivity : ComponentActivity() {
                             println(snappedDateTime)
                         }
                         WheelDateTimePicker(
-                            startDateTime = LocalDateTime.of(
+                            startDateTime = LocalDateTime(
                                 2025, 10, 20, 5, 30
                             ),
-                            minDateTime = LocalDateTime.now(),
-                            maxDateTime = LocalDateTime.of(
+                            minDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                            maxDateTime = LocalDateTime(
                                 2025, 10, 20, 5, 30
                             ),
                             timeFormat = TimeFormat.AM_PM,

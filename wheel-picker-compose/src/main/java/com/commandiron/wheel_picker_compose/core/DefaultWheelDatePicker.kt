@@ -14,15 +14,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import java.text.DateFormatSymbols
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 @Composable
 internal fun DefaultWheelDatePicker(
     modifier: Modifier = Modifier,
     startDate: LocalDate = LocalDate.now(),
-    minDate: LocalDate = LocalDate.MIN,
-    maxDate: LocalDate = LocalDate.MAX,
-    yearsRange: IntRange? = IntRange(1922, 2122),
+    minDate: LocalDate = LocalDate.EPOCH,
+    maxDate: LocalDate = LocalDate.CYBER_ERA,
+    yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
     size: DpSize = DpSize(256.dp, 128.dp),
     rowCount: Int = 3,
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -116,14 +116,14 @@ internal fun DefaultWheelDatePicker(
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                     enabled = false
                 ),
-                startIndex = months.find { it.value== startDate.monthValue }?.index ?: 0,
+                startIndex = months.find { it.value== startDate.monthNumber }?.index ?: 0,
                 onScrollFinished = { snappedIndex ->
 
                     val newMonth = months.find { it.index == snappedIndex }?.value
 
                     newMonth?.let {
 
-                        val newDate = snappedDate.withMonth(newMonth)
+                        val newDate = snappedDate.withMonthNumber(newMonth)
 
                         if(!newDate.isBefore(minDate) && !newDate.isAfter(maxDate)) {
                             snappedDate = newDate
@@ -131,7 +131,7 @@ internal fun DefaultWheelDatePicker(
 
                         dayOfMonths = calculateDayOfMonths(snappedDate.month.value, snappedDate.year)
 
-                        val newIndex =  months.find { it.value == snappedDate.monthValue }?.index
+                        val newIndex =  months.find { it.value == snappedDate.monthNumber }?.index
 
                         newIndex?.let {
                             onSnappedDate(
@@ -144,7 +144,7 @@ internal fun DefaultWheelDatePicker(
                     }
 
 
-                    return@WheelTextPicker months.find { it.value == snappedDate.monthValue }?.index
+                    return@WheelTextPicker months.find { it.value == snappedDate.monthNumber }?.index
                 }
             )
             //Year
@@ -217,7 +217,7 @@ private data class Year(
 
 internal fun calculateDayOfMonths(month: Int, year: Int): List<DayOfMonth> {
 
-    val isLeapYear = LocalDate.of(year, month, 1).isLeapYear
+    val isLeapYear = LocalDate(year, month, 1).isLeapYear
 
     val month31day = (1..31).map {
         DayOfMonth(

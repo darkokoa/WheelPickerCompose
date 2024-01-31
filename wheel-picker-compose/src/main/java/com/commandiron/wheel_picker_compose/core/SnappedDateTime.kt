@@ -1,8 +1,8 @@
 package com.commandiron.wheel_picker_compose.core
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 
 internal sealed class SnappedDateTime(val snappedLocalDateTime: LocalDateTime, val snappedIndex: Int) {

@@ -14,8 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import java.time.LocalTime
-import java.time.temporal.ChronoUnit
+import kotlinx.datetime.LocalTime
 
 @Composable
 internal fun DefaultWheelTimePicker(
@@ -32,7 +31,7 @@ internal fun DefaultWheelTimePicker(
     onSnappedTime : (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _,_ -> null },
 ) {
 
-    var snappedTime by remember { mutableStateOf(startTime.truncatedTo(ChronoUnit.MINUTES)) }
+    var snappedTime by remember { mutableStateOf(LocalTime(startTime.hour, startTime.minute)) }
 
     val hours = (0..23).map {
         Hour(
@@ -305,8 +304,8 @@ internal fun localTimeToAmPmHour(localTime: LocalTime): Int {
     if(
         isBetween(
             localTime,
-            LocalTime.of(0,0),
-            LocalTime.of(0,59)
+            LocalTime(0,0),
+            LocalTime(0,59)
         )
     ) {
         return localTime.hour + 12
@@ -315,8 +314,8 @@ internal fun localTimeToAmPmHour(localTime: LocalTime): Int {
     if(
         isBetween(
             localTime,
-            LocalTime.of(1,0),
-            LocalTime.of(11,59)
+            LocalTime(1,0),
+            LocalTime(11,59)
         )
     ) {
         return localTime.hour
@@ -325,8 +324,8 @@ internal fun localTimeToAmPmHour(localTime: LocalTime): Int {
     if(
         isBetween(
             localTime,
-            LocalTime.of(12,0),
-            LocalTime.of(12,59)
+            LocalTime(12,0),
+            LocalTime(12,59)
         )
     ) {
         return localTime.hour
@@ -335,8 +334,8 @@ internal fun localTimeToAmPmHour(localTime: LocalTime): Int {
     if(
         isBetween(
             localTime,
-            LocalTime.of(13,0),
-            LocalTime.of(23,59)
+            LocalTime(13,0),
+            LocalTime(23,59)
         )
     ) {
         return localTime.hour - 12

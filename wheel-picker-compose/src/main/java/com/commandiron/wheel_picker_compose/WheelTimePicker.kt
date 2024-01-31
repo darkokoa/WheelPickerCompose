@@ -9,10 +9,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.commandiron.wheel_picker_compose.core.DefaultWheelTimePicker
+import com.commandiron.wheel_picker_compose.core.MAX
+import com.commandiron.wheel_picker_compose.core.MIN
 import com.commandiron.wheel_picker_compose.core.SelectorProperties
 import com.commandiron.wheel_picker_compose.core.TimeFormat
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
-import java.time.LocalTime
+import com.commandiron.wheel_picker_compose.core.now
+import kotlinx.datetime.LocalTime
 
 @Composable
 fun WheelTimePicker(
@@ -26,7 +29,7 @@ fun WheelTimePicker(
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
     textColor: Color = LocalContentColor.current,
     selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-    onSnappedTime : (snappedTime: LocalTime) -> Unit = {},
+    onSnappedTime: (snappedTime: LocalTime) -> Unit = {},
 ) {
     DefaultWheelTimePicker(
         modifier,

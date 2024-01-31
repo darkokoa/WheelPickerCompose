@@ -8,18 +8,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.commandiron.wheel_picker_compose.core.CYBER_ERA
 import com.commandiron.wheel_picker_compose.core.DefaultWheelDatePicker
+import com.commandiron.wheel_picker_compose.core.EPOCH
 import com.commandiron.wheel_picker_compose.core.SelectorProperties
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
-import java.time.LocalDate
+import com.commandiron.wheel_picker_compose.core.now
+import kotlinx.datetime.LocalDate
 
 @Composable
 fun WheelDatePicker(
     modifier: Modifier = Modifier,
     startDate: LocalDate = LocalDate.now(),
-    minDate: LocalDate = LocalDate.MIN,
-    maxDate: LocalDate = LocalDate.MAX,
-    yearsRange: IntRange? = IntRange(1922, 2122),
+    minDate: LocalDate = LocalDate.EPOCH,
+    maxDate: LocalDate = LocalDate.CYBER_ERA,
+    yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
     size: DpSize = DpSize(256.dp, 128.dp),
     rowCount: Int = 3,
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
