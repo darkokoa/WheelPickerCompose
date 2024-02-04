@@ -14,6 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.number
 import kotlin.time.DurationUnit
 
 @Composable
@@ -85,8 +86,8 @@ internal fun DefaultWheelDateTimePicker(
                             snappedDateTime.dayOfMonth - 1
                         }
                         is SnappedDate.Month -> {
-                            onSnappedDateTime(SnappedDateTime.Month(snappedDateTime,snappedDateTime.month.value - 1))
-                            snappedDateTime.month.value - 1
+                            onSnappedDateTime(SnappedDateTime.Month(snappedDateTime,snappedDateTime.month.number - 1))
+                            snappedDateTime.month.number - 1
                         }
                         is SnappedDate.Year -> {
                             onSnappedDateTime(SnappedDateTime.Year(snappedDateTime, yearTexts.indexOf(snappedDateTime.year.toString())))

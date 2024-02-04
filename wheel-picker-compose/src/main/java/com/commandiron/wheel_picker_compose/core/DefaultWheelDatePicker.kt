@@ -13,8 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import java.text.DateFormatSymbols
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import kotlinx.datetime.number
 
 @Composable
 internal fun DefaultWheelDatePicker(
@@ -32,13 +33,15 @@ internal fun DefaultWheelDatePicker(
 ) {
     var snappedDate by remember { mutableStateOf(startDate) }
 
-    var dayOfMonths = calculateDayOfMonths(snappedDate.month.value, snappedDate.year)
+    var dayOfMonths = calculateDayOfMonths(snappedDate.month.number, snappedDate.year)
 
     val months = (1..12).map {
+        val monthName = Month(it).name
+
         Month(
             text = if(size.width / 3 < 55.dp){
-                DateFormatSymbols().shortMonths[it - 1]
-            } else DateFormatSymbols().months[it - 1],
+                monthName.substring(0, 3)
+            } else monthName,
             value = it,
             index = it - 1
         )
@@ -129,7 +132,7 @@ internal fun DefaultWheelDatePicker(
                             snappedDate = newDate
                         }
 
-                        dayOfMonths = calculateDayOfMonths(snappedDate.month.value, snappedDate.year)
+                        dayOfMonths = calculateDayOfMonths(snappedDate.month.number, snappedDate.year)
 
                         val newIndex =  months.find { it.value == snappedDate.monthNumber }?.index
 
@@ -174,7 +177,7 @@ internal fun DefaultWheelDatePicker(
                                 snappedDate = newDate
                             }
 
-                            dayOfMonths = calculateDayOfMonths(snappedDate.month.value, snappedDate.year)
+                            dayOfMonths = calculateDayOfMonths(snappedDate.month.number, snappedDate.year)
 
                             val newIndex =  years.find { it.value == snappedDate.year }?.index
 
